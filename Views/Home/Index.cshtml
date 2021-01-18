@@ -1,0 +1,566 @@
+﻿@model YoutubeConverter.Models.VideoLink
+@{
+    ViewBag.Title = "Home Page";
+    string Link = "#",
+           title="",
+           duration="00:00";
+    if (!string.IsNullOrEmpty(Model.videoLink) || Model==null)
+    {
+        Link = "Download.ashx?file=" + Model.videoLink;
+    }
+    if (!string.IsNullOrEmpty(Model.title) || Model==null)
+    {
+        title = Model.title;
+    }
+        if (!string.IsNullOrEmpty(Model.duration) || Model==null)
+    {
+        duration = Model.duration;
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/Scripts/jquery-3.4.1.min.js")
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans&display=swap%27);">
+    <link rel="icon" href="~/images/icon1.ico" type="image/x-icon">
+    <title>
+        YouTube Downloader
+    </title>
+
+</head>
+<body>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+
+                <nav class="navbar navbar-default">
+                    <div class="container-fluid">
+                        <div class="navbar-header">
+                            <a class="navbar-brand header" href="#">Savefrom.net</a>
+                        </div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class=""><a href="#">About Us</a></li>
+                            <li><a href="#">How It Works</a></li>
+                            <li><a href="#">Contacts</a></li>
+                        </ul>
+                    </div>
+                    <hr>
+                </nav>
+
+                <main class="text-center my-5">
+                    <h2 style="margin-bottom:40px;"> Youtube video Downloader </h2>
+                    @using (Html.BeginForm())
+                    {
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="col-md-2 "></div>
+                                <div class="col-md-6 border ">
+                                    @Html.TextBoxFor(m => m.videoLink, new { @name = "sf_url", @placeholder = "Paste your youtube video link here", @class = "box form-control", @id = "sf_url" })
+                                    @*<input type="text" name="sf_url" value="" autofocus="" placeholder="Paste your video link here" class="box form-control" id="sf_url">*@
+                                </div>
+                                <div class="col-md-2 text-center" style="background-color: #00cc00;padding: 7px;">
+                                    @*<a href="#" > Download </a>*@
+                                    <input type="button" name="sf_url" style="background: inherit; color: white; border: none;" autofocus="" value="Download" class="box form-control" id="btnsf_url">
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-2"></div>
+                                <div class="col-md-10">
+                                    <p class="text-left">
+                                        By using our service you accept our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy </a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <span> <a href="#"><h4 style="margin-bottom:40px; font-weight: bold; text-decoration: underline;"> How to download? </h4></a></span>
+
+
+                    <div class="container-fluid" style="display:none;" id="resolutiondiv">
+                        <div class="row">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="col-md-8 container-fluid" style="border: 2px solid #BEBEBE">
+                                <div class="row" >
+                                    <div class="col-md-4" style=" width:248px;padding: 0px; ">
+                                        <img src="#" width="250px" id="thumbnail" />
+                                    </div>
+                                    <div class="col-md-7 text-left" style="padding-top:10px;">
+                                        <div>
+                                            <div id="video_title">@title</div>
+                                            <div id="video_duration">duration</div>
+                                        </div>
+                                        <div style="height: 40px;">
+                                            <div class="row">
+                                                <div class="col-md-8">
+                                                    <div class="row" style="padding-left: 10px;">
+                                                        <div class="col-md-6 btn btn-success" style="height:40px; background:green;border:1px solid  #F0F0F5;margin-top: 30px; ">
+                                                            <p class="text-center">
+                                                                <a href="#" style=" color:white;padding:3px;" id="btndownload">
+                                                                    Download
+                                                                </a>
+
+                                                            </p>
+                                                        </div>
+                                                        <div class="col-md-6" style="padding-left: 0px; margin-top: 30px;">
+                                                            <div class="form-group">
+
+                                                                <select class="form-control" id="video_resolution" style="height: 40px;color: green;font-size:17px;border:1px solid #F0F0F5;  font-weight: 100;">
+                                                                    @*<option value="1">MP4 270</option>
+                                                        <option>MP4 320</option>
+                                                        <option>MP4 720</option>
+                                                        <option>MP4 1080</option>*@
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2"></div>
+                        </div>
+                    </div>
+                    <div id="download-progress" style="display:none">
+                        <p class="text-center" style="display:block">Processing the link to download. Please Stay on the page</p>
+                        <img data-src="~/images/process.gif" alt="Loading Video..." width="125px" height="60px" src="~/images/process.gif" />
+                    </div>
+                    <span style="display:none" id="lnkdnld">
+                        <a href=@Link id="message">click here to download!!</a>
+                    </span>
+
+                    <div class="method-sectiondiv container-fluid">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <span class="step">Method 1:</span><span style="height: 20px;" class="glyphicon glyphicon-play"></span>
+                                <div class="note">Recommended!</div>
+                            </div>
+                            <div class="col-md-10 text-left">
+                                The fastest and easiest way to download YouTube videos and music is to install SaveFrom.net helper
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn btn-success ">
+                        <a href="#">
+                            <object data="~/images/arrow.svg" class="arrow" type="image/svg+xml"></object>
+                            INSTALL
+                        </a>
+                    </div>
+
+                    <p>
+                        Due to its convenience, Youtube.com is the most popular video hosting and the third most popular website in the world. Nevertheless, its functionality is limited whenever you try to download YouTube videos for free. You can save only a small number of videos and audio by using common methods.
+                    </p>
+                    <p>
+                        SaveFrom.net offers the fastest way of Youtube video download in mp3, mp4, SQ, HD, FullHD quality, plus a wide range of formats for free. It’s the most convenient YouTube downloader you’ve ever tried! Save one video or song to your pc or mobile and see it for yourself!
+                    </p>
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row card-temp">
+                                    <div class="col-md-6 ">
+                                        <img data-src="~/images/youtube.PNG" alt="How to download music from Youtube?" width="425px" src="~/images/youtube.PNG" />
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <h2>
+                                            How to download download Youtube videos?
+                                        </h2>
+                                        <p>
+                                            Do you wonder how to download music and videos from Youtube?
+                                        </p>
+                                        <ol>
+                                            <li style="background:inherit;">
+                                                <p>Click the green “Download” button to save the video, or choose the format you like (MP3, MP4, WEBM, 3GP).</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Then click on the gray arrow on the right of the Download button in order to choose the preferred format.</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Now you can enjoy the videos and playlists offline! Works in Chrome, Firefox, or any other browser.</p>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row card-temp">
+                                    <div class="col-md-6 ">
+                                        <img data-src="~/images/youtube.PNG" alt="How to download music from Youtube?" width="425px" src="~/images/youtube.PNG" />
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <h2>
+                                            How to download Youtube videos in mp4 or mp3?
+                                        </h2>
+
+                                        <ol>
+                                            <li style="background:inherit;">
+                                                <p>If you want to download a youtube video in mp3 or mp4, you’ll need to use <a href="#">Televzr Downloader.</a></p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p> you use Ummy, the buttons "HD via Ummy" or "MP3 via Ummy" will appear below the video</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Once you’ve installed the youtube downloader app on mac or pc, you’ll see “Download” button below each video offering to download HD or mp3.</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>This method works with all versions of Windows.</p>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="step">Method 2:</span><span class="glyphicon glyphicon-play"></span>
+                            <div class="note">Recommended!</div>
+                        </div>
+                        <div class="col-md-10 text-left">
+                            Download Youtube video via <strong>SS</strong>youtube.com
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row card-temp">
+                                    <div class="col-md-6 ">
+                                        <img data-src="~/images/youtube.PNG" alt="How to download music from Youtube?" width="425px" src="~/images/youtube.PNG" />
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <h2>
+                                            How to save movies without Youtube Downloader add-on?
+                                        </h2>
+                                        <p>
+                                            Do you believe that downloading YouTube videos online can be done without an add-on?
+                                        </p>
+                                        <ol>
+                                            <li style="background:inherit;">
+                                                <p>Just add “ss” to the video URL to launch the youtube video downloading process.</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Your download will begin in a short time</p>
+                                                <p>
+                                                    Example:  <br>
+
+                                                    Original URL: https://youtube.com/watch?v=YOcmSsBfafg
+
+                                                    URL with ss: https://ssyoutube.com/watch?v=YOcmSsBfafg
+                                                </p>
+                                            </li>
+
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="step">Method 3:</span><span class="glyphicon glyphicon-play"></span>
+                            <div class="note">Recommended!</div>
+                        </div>
+                        <div class="col-md-10 text-left">
+                            Start Youtube video download by adding “sfrom.net/” or “savefrom.net/”
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row card-temp">
+                                    <div class="col-md-6 ">
+                                        <img data-src="~/images/youtube.PNG" alt="How to download music from Youtube?" width="425px" src="~/images/youtube.PNG" />
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <h2>
+                                            How to save videos from any other web page?
+                                        </h2>
+
+                                        <p>
+                                            Do you have a video, which is not on YouTube and would like to download it?
+                                        </p>
+                                        <p>
+                                            By using SaveFrom.Net Youtube downloader, you can save video not only from major video-sharing websites but also from 99% of all web pages that have videos on them. Just add “sfrom.net/” or “savefrom.net/” before the web site's URL and press Enter. This way you’ll see the list with direct links to all videos posted on this web resource.
+                                        </p>
+                                        <p>
+                                            Example: sfrom.net/http://www.freethechildren.com/
+                                        </p>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-md-2">
+                            <span class="step">Method 4:</span><span class="glyphicon glyphicon-play"></span>
+                            <div class="note">Recommended!</div>
+                        </div>
+                        <div class="col-md-10 text-left">
+                            Download videos by using SaveFrom.net
+                        </div>
+                    </div>
+
+                    <div class="container-fluid">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row card-temp">
+                                    <div class="col-md-6 ">
+                                        <img data-src="~/images/youtube.PNG" alt="How to download music from Youtube?" width="425px" src="~/images/youtube.PNG" />
+                                    </div>
+                                    <div class="col-md-6 ">
+                                        <h2>
+                                            Download YouTube videos by using SaveFrom.net
+                                        </h2>
+
+                                        <ol>
+                                            <li style="background:inherit;">
+                                                <p>Open SaveFrom.net website and enter the video’s URL to the corresponding field, at the top of the page.</a></p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p> Click “Download” and you’ll see the list with all available links</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Choose the desired format and get the file you need.</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>That’s it, as simple as that!</p>
+                                            </li>
+                                            <li style="background:inherit;">
+                                                <p>Also, you can download <a href="#">Savefrom.net app</a> and use it on your phone.</p>
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-end container-fluid">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <img src="~/images/icon_128_2.png" />
+                            </div>
+                            <div class="col-md-6 text-left">
+                                <h1 style="font-weight: 500;">
+                                    SaveFrom.net helper
+                                </h1>
+                                <p>
+                                    Helps you to download files from YouTube, Facebook, Vimeo and 40+ other websites in one click!
+                                </p>
+                            </div>
+                            <div class="col-md-4 text-left">
+                                <div class="btn btn-success end-button">
+                                    <a href="#">
+                                        <object data="~/images/down-arrows.svg" class="arrow " type="image/svg+xml"></object>
+                                        INSTALL
+                                    </a>
+                                </div>
+                                <p>
+                                    <span class="foot-note">Safety is confirmed</span>   <a href="#">Norton™ Safe Web</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <div style="height: 40px;"></div>
+
+                <hr>
+                <footer class="container-fluid">
+                    <div style="height: 50px;"></div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <object data="~/images/logo_small2.svg" class=" " type="image/svg+xml"></object>
+                            <p class="copyright" dir="ltr">© 2008-2020</p>
+                        </div>
+                        <div class="col-md-6 text-left">
+                            <ul>
+                                <li><a href="#">About Us</a></li>
+                                <li><a href="#">Contact Us</a></li>
+                                <li><a href="#">Privacy Policies</a></li>
+                                <li><a href="#">Terms and Conditions</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-md-2 text-left">
+                           
+                        </div>
+                        <div class="col-md-2 text-left">
+                            
+                        </div>
+                        <div class="col-md-2 text-left">
+                           
+                        </div>
+                    </div>
+                </footer>
+
+            </div>
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            $("#btnsf_url").click(function (event) {
+                event.preventDefault();
+                $("#resolutiondiv").css("display" ,"none");
+                $("#download-progress").css("display" ,"block");
+                getResolution();
+            });
+
+            $("#sf_url").click(function () {
+                  $("#lnkdnld").css("display", "none");
+            });
+            $("#video_resolution").click(function () {
+                $("#lnkdnld").css("display", "none");
+            });
+            
+            $("#btndownload").click(function (event) {
+                event.preventDefault();
+                   $("#lnkdnld").css("display", "none");
+                $("#download-progress").css("display" ,"block");
+                downloadVideo();
+            });
+        });
+
+        var getResolution = () => {
+            var link = $("#sf_url").val();
+            console.log(link);
+            var model = {
+                videoLink: link.toString()
+            }
+            console.log(JSON.stringify(model));
+            $.ajax({
+                type: "POST",
+                url:"@Url.Action("GetResolutions","Home")",
+                    //"Home/Download",
+                processData:false,
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8;',
+                success: function (data) {
+                    alert("alert");
+                    var base = "Download.ashx?file=";
+                    var link = base + data.videoLink;
+                    $("#lnkdnld>a").attr("href", link);
+                    $("#thumbnail").attr("src", data.thumb);
+                    $("#video_title").html(data.title);
+                    $("#video_duration").html(data.duration);
+                     $("#video_resolution").empty();
+                    var optionList = "";
+                    var uniqueResolutions = data.resolutionList.filter(function (itm, i, a) {
+                       
+                        
+                        return i == a.indexOf(itm) && itm>0;
+                    });
+
+                    for (var i = 0; i < uniqueResolutions.length; i++)
+                    {
+
+                        optionList = optionList + "<option value= "+uniqueResolutions[i]+" > MP4 " + uniqueResolutions[i] + " </option>";
+                    }
+                    $("#video_resolution").append(optionList);
+                    debugger
+                },
+                complete: function (data) {
+                    debugger
+                    alert("complete");
+                    if (data.statusText == "success") {
+                        $("#resolutiondiv").css("display", "block");
+                    }
+                    else
+                    {
+                        $("#message").html("Something went wrong!!");
+                        $('#message').css("color", "red");
+                        $("#lnkdnld").css("display", "inline-block");
+                    }
+                    $("#download-progress").css("display", "none");
+                    
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+
+        var downloadVideo = () => {
+            var link = $("#sf_url").val();
+            var resolution = $("#video_resolution").val();
+            console.log(link);
+            var model = {
+                videoLink: link.toString(),
+                resolution: resolution
+            }
+            console.log(JSON.stringify(model));
+            $.ajax({
+                type: "POST",
+                url:"@Url.Action("Download","Home")",
+                processData:false,
+                data: JSON.stringify(model),
+                contentType: 'application/json; charset=utf-8;',
+                success: function (data) {
+                    alert("alert");
+                    var base = "Download.ashx?file=";
+                    var link = base + data.videoLink;
+                    $("#lnkdnld>a").attr("href", link);
+
+                    debugger
+                },
+                complete: function (data) {
+                    debugger
+                    alert("complete");
+                    $("#download-progress").css("display", "none");
+                    if (data.statusText == "success") {
+                        $('#message').css("color", "green");
+                        $("#lnkdnld").css("display", "inline-block");
+                        $("#download-progress").css("display", "none");
+                    }
+                    else
+                    {
+                        $("#message").html("Something went wrong!!");
+                        $('#message').css("color", "red");
+                        $("#lnkdnld").css("display", "inline-block");
+                    }
+                    
+                },
+                error: function () {
+                    alert("error");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
