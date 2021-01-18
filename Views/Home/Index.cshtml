@@ -472,7 +472,7 @@
                 data: JSON.stringify(model),
                 contentType: 'application/json; charset=utf-8;',
                 success: function (data) {
-                    alert("alert");
+//alert("alert");
                     var base = "Download.ashx?file=";
                     var link = base + data.videoLink;
                     $("#lnkdnld>a").attr("href", link);
@@ -493,11 +493,11 @@
                         optionList = optionList + "<option value= "+uniqueResolutions[i]+" > MP4 " + uniqueResolutions[i] + " </option>";
                     }
                     $("#video_resolution").append(optionList);
-                    debugger
+                  //  debugger
                 },
                 complete: function (data) {
-                    debugger
-                    alert("complete");
+                   // debugger
+                 //   alert("complete");
                     if (data.statusText == "success") {
                         $("#resolutiondiv").css("display", "block");
                     }
@@ -532,16 +532,16 @@
                 data: JSON.stringify(model),
                 contentType: 'application/json; charset=utf-8;',
                 success: function (data) {
-                    alert("alert");
+                //    alert("alert");
                     var base = "Download.ashx?file=";
                     var link = base + data.videoLink;
                     $("#lnkdnld>a").attr("href", link);
 
-                    debugger
+               //     debugger
                 },
                 complete: function (data) {
-                    debugger
-                    alert("complete");
+                  //  debugger
+                  //  alert("complete");
                     $("#download-progress").css("display", "none");
                     if (data.statusText == "success") {
                         $('#message').css("color", "green");
